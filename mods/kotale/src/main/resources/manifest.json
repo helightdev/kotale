@@ -1,0 +1,17 @@
+{
+  "Name": "Kotale",
+  "Group": "Kotale",
+  "Version": "1.0.0",
+  "Authors": [
+    {
+      "Name": "Helight",
+      "Email": "contact@helight.dev",
+      "Url": "https://helight.dev"
+    }
+  ],
+  "Main": "dev.helight.kotale.KotalePlugin",
+  "ServerVersion": "*",
+  "Dependencies": {
+    "Kotale:Kotlin": "*"
+  }
+}
