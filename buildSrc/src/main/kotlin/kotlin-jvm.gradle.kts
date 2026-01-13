@@ -47,6 +47,10 @@ repositories {
     maven {
         name = "Hytale Private"
         url = uri("https://repo.averix.tech/repository/hytale-private/")
+        credentials {
+            username = project.findProperty("averix.user")?.toString() ?: System.getenv("KOTALE_USER")
+            password = project.findProperty("averix.key")?.toString() ?: System.getenv("KOTALE_KEY")
+        }
     }
 }
 
@@ -67,10 +71,10 @@ publishing {
     repositories {
         maven {
             name = "Averix"
-            url = uri("https://repo.averix.tech/repository/hyboot/")
+            url = uri("https://repo.averix.tech/repository/hytale/")
             credentials {
-                username = project.findProperty("averix.user")?.toString() ?: System.getenv("AVERIX_USER")
-                password = project.findProperty("averix.key")?.toString() ?: System.getenv("AVERIX_KEY")
+                username = project.findProperty("averix.user")?.toString() ?: System.getenv("KOTALE_USER")
+                password = project.findProperty("averix.key")?.toString() ?: System.getenv("KOTALE_KEY")
             }
         }
     }
