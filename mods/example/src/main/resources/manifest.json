@@ -1,5 +1,5 @@
 {
-  "Name": "Kotale",
+  "Name": "KotaleExample",
   "Group": "Kotale",
   "Version": "${buildVersion}",
   "Authors": [
@@ -9,9 +9,9 @@
       "Url": "https://helight.dev"
     }
   ],
-  "Main": "dev.helight.kotale.KotalePluginImpl",
+  "Main": "dev.helight.kotale.KotaleExamplePlugin",
   "ServerVersion": "*",
   "Dependencies": {
-    "Kotale:Kotlin": "*"
+    "Kotale:Kotale": "*"
   }
 }

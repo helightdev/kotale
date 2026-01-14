@@ -5,6 +5,15 @@ Kotale provides two mods for hytale that:
 1. (kotlin.jar) The shaded stdlib, reflect and coroutine libraries for other mods
 2. (kotale.jar) Extensions and utilities for modding hytale in kotlin
 
+## Included Libraries
+
+*   Kotlin StdLib (2.3.0)
+*   Kotlin Reflect (2.3.0)
+*   Kotlin Serialization (1.9.0)
+*   Kotlin Serialization Json (1.9.0)
+*   Kotlin Serialization Cbor (1.9.0)
+*   Kotlin Coroutines (1.10.2)
+
 ## Usage (kotlin.jar)
 
 To use the shaded kotlin stdlib in your mod, add Kotale:Kotlin as a dependency in your `manifest.json`:

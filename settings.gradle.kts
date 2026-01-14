@@ -21,3 +21,4 @@ plugins {
 rootProject.name = "kotale"
 include(":mods:kotlin")
 include(":mods:kotale")
+include(":mods:example")
