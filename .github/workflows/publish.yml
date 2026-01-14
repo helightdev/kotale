@@ -34,8 +34,8 @@ jobs:
 
       - name: Move jars to release folder
         run: |
-          mkdir release
-          mv mods/kotlin/build/libs/*-all.jar release/kotlin.jar
+          mkdir -p release &&
+          mv mods/kotlin/build/libs/*-all.jar release/kotlin.jar &&
           mv mods/kotale/build/libs/*-all.jar release/kotale.jar
       - name: Upload Release Asset
         uses: softprops/action-gh-release@v2
