@@ -1,7 +1,7 @@
 {
   "Name": "Kotale",
   "Group": "Kotale",
-  "Version": "1.0.0",
+  "Version": "${buildVersion}",
   "Authors": [
     {
       "Name": "Helight",

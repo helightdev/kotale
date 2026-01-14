@@ -2,6 +2,8 @@
 // `buildSrc` is a Gradle-recognized directory and every plugin there will be easily available in the rest of the build.
 package buildsrc.convention
 
+import gradle.kotlin.dsl.accessors._1fecaaa69017c0b639000a1c9113da6f.processResources
+import org.apache.tools.ant.filters.ReplaceTokens
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 
@@ -92,5 +94,12 @@ tasks.withType<Test>().configureEach {
             TestLogEvent.PASSED,
             TestLogEvent.SKIPPED
         )
+    }
+}
+
+tasks.withType<ProcessResources>().configureEach {
+    filesMatching("manifest.json") {
+        val version = System.getenv("BUILD_VERSION")?.takeIf { it.isNotBlank() } ?: "0.0.1"
+        expand("buildVersion" to version)
     }
 }

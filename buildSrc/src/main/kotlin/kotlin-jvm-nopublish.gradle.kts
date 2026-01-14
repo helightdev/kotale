@@ -53,3 +53,10 @@ tasks.withType<Test>().configureEach {
         )
     }
 }
+
+tasks.withType<ProcessResources>().configureEach {
+    filesMatching("manifest.json") {
+        val version = System.getenv("BUILD_VERSION")?.takeIf { it.isNotBlank() } ?: "0.0.1"
+        expand("buildVersion" to version)
+    }
+}
