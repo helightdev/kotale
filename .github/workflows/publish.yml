@@ -27,19 +27,21 @@ jobs:
       - name: Build shadow JAR
         run: ./gradlew shadowJar -x test
 
-      - name: Publish to Maven Repositories
-        run: ./gradlew publish -x test
-        env:
-          BUILD_VERSION: ${{ github.ref_name }}
-
       - name: Move jars to release folder
         run: |
           mkdir -p release &&
+          ls &&
           mv mods/kotlin/build/libs/*-all.jar release/kotlin.jar &&
           mv mods/kotale/build/libs/*-all.jar release/kotale.jar
+
       - name: Upload Release Asset
         uses: softprops/action-gh-release@v2
         with:
           files: release/*.jar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish to Maven Repositories
+        run: ./gradlew publish -x test
+        env:
+          BUILD_VERSION: ${{ github.ref_name }}
