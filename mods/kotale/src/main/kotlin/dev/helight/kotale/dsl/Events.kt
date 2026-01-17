@@ -1,4 +1,4 @@
-package dev.helight.kotale
+package dev.helight.kotale.dsl
 
 import com.hypixel.hytale.event.IBaseEvent
 import com.hypixel.hytale.event.IEventRegistry
