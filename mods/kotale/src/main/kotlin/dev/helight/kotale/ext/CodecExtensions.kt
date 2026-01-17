@@ -20,7 +20,7 @@ fun <SELF, T, BUILDER : BuilderCodec.BuilderBase<SELF, BUILDER>> BUILDER.appendP
     @Suppress("UNCHECKED_CAST")
     return this.append(
         KeyedCodec<T>(name, codec, required),
-        { comp: SELF, value: T -> setter.invokeExact(comp, value) },
-        { comp: SELF -> getter.invokeExact(comp) as T }
+        { comp: SELF, value: T -> setter.invoke(comp, value) },
+        { comp: SELF -> getter.invoke(comp) as T }
     )
 }
