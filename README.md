@@ -27,7 +27,11 @@ To use the shaded kotlin stdlib in your mod, add Kotale:Kotlin as a dependency i
 ```
 
 and download the latest version of `kotlin.jar` from the **Releases** or the **Curseforge** page and place it in your
-`mods` folder. To avoid conflicts when shading other dependencies, you should exclude all
+`mods` folder. 
+
+
+### Additional Shading
+To avoid conflicts when shading other dependencies, you should exclude all
 kotlin libraries from your mod jar, for example with the following `shadowJar` configuration:
 
 ```kotlin
@@ -42,6 +46,12 @@ tasks {
     }
 }
 ```
+
+Warning: This may or may not work as you expect it since kotlin libraries partially rely on kotlin_module files to work,
+which are stored in meta-inf folders. In this case, you may need to selectively exclude only kotlin runtime libraries.
+
+**In the best case, avoid using shadowing when you aren't including any other dependencies
+that need shading and relocate if they are only internal**
 
 ## Usage (kotale.jar)
 
