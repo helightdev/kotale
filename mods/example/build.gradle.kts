@@ -1,10 +1,9 @@
 plugins {
     // Apply the shared build logic from a convention plugin.
     // The shared code is located in `buildSrc/src/main/kotlin/kotlin-jvm.gradle.kts`.
-    id("buildsrc.convention.kotlin-jvm")
+    id("buildsrc.convention.kotlin-jvm-nopublish")
     // Apply Kotlin Serialization plugin from `gradle/libs.versions.toml`.
     alias(libs.plugins.kotlinPluginSerialization)
-    alias(libs.plugins.shadow)
 }
 
 dependencies {
@@ -14,16 +13,4 @@ dependencies {
     compileOnly(project(":mods:kotale"))
 
     testImplementation(kotlin("test"))
-}
-
-tasks {
-    shadowJar {
-        exclude("kotlin/**")
-        exclude("org/intellij/**")
-        exclude("org/jetbrains/**")
-        exclude("META-INF/**")
-
-        minimize()
-    }
-
 }
