@@ -1,13 +1,19 @@
 package dev.helight.kotale
 
-import com.hypixel.hytale.server.core.plugin.JavaPlugin
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit
 
-class KotalePluginImpl(init: JavaPluginInit) : JavaPlugin(init) {
+class KotalePluginImpl(init: JavaPluginInit) : KotlinPlugin(init) {
 
     override fun setup() {
-        super.setup()
-        logger.atInfo().log("Kotale Plugin setup!")
+        KotaleInitializer.setupForPlugin(this)
+    }
+
+    override fun start() {
+        KotaleInitializer.startForPlugin(this)
+    }
+
+    override fun shutdown() {
+        KotaleInitializer.disposeForPlugin(this)
     }
 }
 
