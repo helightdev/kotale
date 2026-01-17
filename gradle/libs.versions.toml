@@ -3,7 +3,7 @@ kotlin = "2.3.0"
 kotlinxCoroutines = "1.10.2"
 kotlinxSerialization = "1.9.0"
 shadow = "9.3.1"
-hytale = "1.0.0"
+hytale = "2026.01.17"
 
 [libraries]
 kotlinGradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
@@ -11,7 +11,7 @@ kotlinxSerializationJson = { module = "org.jetbrains.kotlinx:kotlinx-serializati
 kotlinxSerializationCbor = { module = "org.jetbrains.kotlinx:kotlinx-serialization-cbor", version.ref = "kotlinxSerialization" }
 kotlinxCoroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
 kotlinReflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
-hytaleServer = { module = "com.hypixel.hytale:Server", version.ref = "hytale" }
+hytaleServer = { module = "com.hypixel.hytale:HytaleServer-parent", version.ref = "hytale" }
 
 [bundles]
 kotlinxEcosystem = ["kotlinxSerializationJson", "kotlinxSerializationCbor", "kotlinxCoroutines", "kotlinReflect"]
