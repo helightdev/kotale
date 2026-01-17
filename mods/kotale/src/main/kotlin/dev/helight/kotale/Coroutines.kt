@@ -36,7 +36,20 @@ fun <T> World.launch(plugin: KotlinPlugin, block: suspend CoroutineScope.() -> T
         block()
     }
 
-fun Job.asVoidCompletableFuture(): CompletableFuture<Void?> {
+
+fun Job.asVoidCompletableFuture(): CompletableFuture<Void> {
+    val future = CompletableFuture<Void>()
+    invokeOnCompletion { throwable ->
+        if (throwable != null) {
+            future.completeExceptionally(throwable)
+        } else {
+            future.complete(null)
+        }
+    }
+    return future
+}
+
+fun Job.asNullVoidCompletableFuture(): CompletableFuture<Void?> {
     val future = CompletableFuture<Void?>()
     invokeOnCompletion { throwable ->
         if (throwable != null) {
