@@ -4,7 +4,6 @@ plugins {
     id("buildsrc.convention.kotlin-jvm")
     // Apply Kotlin Serialization plugin from `gradle/libs.versions.toml`.
     alias(libs.plugins.kotlinPluginSerialization)
-    alias(libs.plugins.shadow)
 }
 
 dependencies {
@@ -13,16 +12,4 @@ dependencies {
     compileOnly(libs.hytaleServer)
 
     testImplementation(kotlin("test"))
-}
-
-tasks {
-    shadowJar {
-        exclude("kotlin/**")
-        exclude("org/intellij/**")
-        exclude("org/jetbrains/**")
-        exclude("META-INF/**")
-
-        minimize()
-    }
-
 }

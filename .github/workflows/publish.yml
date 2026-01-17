@@ -24,15 +24,18 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Build shadow JAR
-        run: ./gradlew shadowJar -x test
+      - name: Build kotlin shadow JAR
+        run: ./gradlew :mods:kotlin:shadowJar -x test
+
+      - name: Build kotale JAR
+        run: ./gradlew :mods:kotale:jar -x test
 
       - name: Move jars to release folder
         run: |
           mkdir -p release &&
           ls &&
           mv mods/kotlin/build/libs/*-all.jar release/kotlin.jar &&
-          mv mods/kotale/build/libs/*-all.jar release/kotale.jar
+          mv mods/kotale/build/libs/*.jar release/kotale.jar
 
       - name: Upload Release Asset
         uses: softprops/action-gh-release@v2
