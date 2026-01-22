@@ -10,7 +10,7 @@ import kotlin.reflect.jvm.javaMethod
 
 fun <SELF, T, BUILDER : BuilderCodec.BuilderBase<SELF, BUILDER>> BUILDER.appendProperty(
     property: KMutableProperty<T>, codec: Codec<T>,
-    name: String = property.name,
+    name: String = property.name.replaceFirstChar(Char::uppercase),
     required: Boolean = false
 ): BuilderField.FieldBuilder<SELF, T, BUILDER> {
     val lookup = MethodHandles.lookup()
