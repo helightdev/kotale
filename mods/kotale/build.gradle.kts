@@ -12,4 +12,6 @@ dependencies {
     compileOnly(libs.hytaleServer)
 
     testImplementation(kotlin("test"))
+    testImplementation(libs.hytaleServer)
+    testImplementation(libs.bundles.kotlinxEcosystem)
 }
