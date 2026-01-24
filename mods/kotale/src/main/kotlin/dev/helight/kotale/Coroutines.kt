@@ -2,17 +2,8 @@ package dev.helight.kotale
 
 import com.hypixel.hytale.server.core.universe.world.World
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.Runnable
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.util.Collections
-import java.util.WeakHashMap
+import kotlinx.coroutines.*
+import java.util.*
 import java.util.concurrent.CompletableFuture
 import kotlin.coroutines.CoroutineContext
 
@@ -91,8 +82,12 @@ class WorldThreadDispatcher(
 
     companion object {
         private val dispatchers = Collections.synchronizedMap(
-            WeakHashMap<World, CoroutineDispatcher>()
+            IdentityHashMap<World, CoroutineDispatcher>()
         )
+
+        internal fun remove(world: World) {
+            dispatchers.remove(world)
+        }
 
         fun get(world: World): CoroutineDispatcher =
             dispatchers.getOrPut(world) { WorldThreadDispatcher(world) }
