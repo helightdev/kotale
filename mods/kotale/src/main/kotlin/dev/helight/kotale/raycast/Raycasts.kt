@@ -1,18 +1,26 @@
 package dev.helight.kotale.raycast
 
 import com.hypixel.hytale.component.Ref
+import com.hypixel.hytale.math.matrix.Matrix4d
+import com.hypixel.hytale.math.shape.Box
 import com.hypixel.hytale.math.vector.Vector2d
 import com.hypixel.hytale.math.vector.Vector3d
+import com.hypixel.hytale.math.vector.Vector3f
+import com.hypixel.hytale.protocol.DebugShape
 import com.hypixel.hytale.protocol.packets.buildertools.BuilderToolLaserPointer
 import com.hypixel.hytale.server.core.asset.util.ColorParseUtil
+import com.hypixel.hytale.server.core.modules.collision.BlockData
 import com.hypixel.hytale.server.core.modules.collision.CollisionMath
+import com.hypixel.hytale.server.core.modules.debug.DebugUtils
 import com.hypixel.hytale.server.core.modules.entity.component.BoundingBox
 import com.hypixel.hytale.server.core.modules.entity.tracker.NetworkId
 import com.hypixel.hytale.server.core.universe.PlayerRef
 import com.hypixel.hytale.server.core.universe.world.World
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore
 import com.hypixel.hytale.server.core.util.TargetUtil
+import dev.helight.kotale.ext.snapshotBufferOrNull
 import dev.helight.kotale.ext.transform
+import dev.helight.kotale.ext.world
 import kotlin.math.sqrt
 
 
@@ -23,8 +31,8 @@ object Raycasts {
         origin: Vector3d,
         direction: Vector3d,
         maxDistance: Double = 255.0,
-    ): RaycastResult<Int> {
-        return BlockNonAirRaycaster.raycast(world, origin, direction, maxDistance)
+    ): RaycastResult<BlockData> {
+        return BlockBoxRaycaster.raycast(world, origin, direction, maxDistance)
     }
 
     fun raycastEntity(
@@ -33,14 +41,15 @@ object Raycasts {
         direction: Vector3d,
         maxDistance: Double = 255.0,
         entityPredicate: (Ref<EntityStore>) -> Boolean = { true },
-        initialRaycaster: Raycaster<*> = BlockNonAirRaycaster,
+        initialRaycaster: Raycaster<*> = BlockBoxRaycaster,
         stepSize: Double = 5.0,
-        checkSphereSize: Double = 10.0
+        checkSphereSize: Double = 10.0,
+        tickRewind: Int = 0,
     ): RaycastResult<Ref<EntityStore>> {
         // Note: This is implemented by the assumption that it's more efficient to do a block raycast first
         //       and then do entity checks along that path, rather than checking all entities in a maxDistance sphere.
         val (lastPos) = initialRaycaster.raycast(world, origin, direction, maxDistance)
-        return lineCheckEntities(world, origin, lastPos, entityPredicate, stepSize, checkSphereSize)
+        return lineCheckEntities(world, origin, lastPos, entityPredicate, stepSize, checkSphereSize, tickRewind)
     }
 
     fun lineCheckEntities(
@@ -49,7 +58,8 @@ object Raycasts {
         end: Vector3d,
         entityPredicate: (Ref<EntityStore>) -> Boolean = { true },
         stepSize: Double = 5.0,
-        checkSphereSize: Double = 10.0
+        checkSphereSize: Double = 10.0,
+        tickRewind: Int = 0,
     ): RaycastResult<Ref<EntityStore>> {
         val direction = end.clone().subtract(start)
         val lengthSqr = direction.squaredLength()
@@ -70,7 +80,14 @@ object Raycasts {
             nearbyEntities.forEach {
                 val transform = entityStore.transform(it)
                 val boundingBox = entityStore.getComponent(it, BoundingBox.getComponentType()) ?: return@forEach
-                val entityPos = transform.position
+                var entityPos = transform.position
+                if (tickRewind != 0) {
+                    val buffer = entityStore.snapshotBufferOrNull(it)
+                    if (buffer != null) {
+                        entityPos = buffer.getSnapshotClamped(buffer.currentTickIndex - tickRewind).position
+                    }
+                }
+
                 val minMax = Vector2d()
                 if (!CollisionMath.intersectRayAABB(
                         start,
@@ -147,6 +164,36 @@ object Raycasts {
         playerRef.packetHandler.writeNoCache(packet)
     }
 
+
+    fun debugBoundingBox(
+        playerRef: PlayerRef,
+        box: Box,
+        pos: Vector3d,
+        rotation: Vector3d,
+        color: Int = redColor,
+        durationMs: Int = 2000
+    ) {
+        val matrix = Matrix4d().identity()
+        matrix.translate(pos)
+        matrix.translate(0.0, box.height() * 0.5, 0.0)
+        matrix.rotateEuler(
+            rotation.x,
+            rotation.y,
+            rotation.z,
+            Matrix4d()
+        )
+        matrix.scale(box.width(), box.height(), box.depth())
+
+        val r = (color shr 16 and 0xFF) / 255f
+        val g = (color shr 8 and 0xFF) / 255f
+        val b = (color and 0xFF) / 255f
+        val colorVec3f = Vector3f(r, g, b)
+
+        DebugUtils.add(
+            playerRef.world ?: return, DebugShape.Cube, matrix,
+            colorVec3f, durationMs / 1000f, false
+        )
+    }
 
     private val redColor = ColorParseUtil.hexStringToRGBInt("#FF0000")
 }
