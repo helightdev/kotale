@@ -4,9 +4,11 @@ import com.hypixel.hytale.server.core.plugin.JavaPlugin
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 abstract class KotlinPlugin(init: JavaPluginInit) : JavaPlugin(init) {
@@ -22,7 +24,15 @@ abstract class KotlinPlugin(init: JavaPluginInit) : JavaPlugin(init) {
         supervisor.cancel()
     }
 
+    fun scope(dispatcher: CoroutineDispatcher = Dispatchers.Default): CoroutineScope {
+        return CoroutineScope(supervisor + dispatcher)
+    }
+
     fun launch(dispatcher: CoroutineDispatcher = Dispatchers.Default, block: suspend CoroutineScope.() -> Unit): Job {
-        return CoroutineScope(supervisor + dispatcher).launch(block = block)
+        return scope(dispatcher).launch(block = block)
+    }
+
+    fun <T> async(dispatcher: CoroutineDispatcher = Dispatchers.Default, block: suspend CoroutineScope.() -> T): Deferred<T> {
+        return scope(dispatcher).async(block = block)
     }
 }
