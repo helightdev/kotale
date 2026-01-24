@@ -5,6 +5,7 @@ import com.hypixel.hytale.server.core.universe.world.storage.EntityStore
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.Runnable
 import kotlinx.coroutines.async
@@ -26,16 +27,30 @@ suspend fun <T> EntityStore.context(block: suspend CoroutineScope.() -> T): T = 
     block()
 }
 
-fun World.launch(plugin: KotlinPlugin, block: suspend CoroutineScope.() -> Unit): Job =
-    CoroutineScope(plugin.supervisor + this.dispatcher).launch {
+fun World.launch(plugin: KotlinPlugin? = KotaleInitializer.plugin, block: suspend CoroutineScope.() -> Unit): Job {
+    requireNotNull(plugin) { "No plugin found in scope" }
+    return CoroutineScope(plugin.supervisor + this.dispatcher).launch {
         block()
     }
+}
 
-fun <T> World.launch(plugin: KotlinPlugin, block: suspend CoroutineScope.() -> T): Deferred<T> =
-    CoroutineScope(plugin.supervisor + this.dispatcher).async {
+fun launchGlobal(plugin: KotlinPlugin? = KotaleInitializer.plugin, block: suspend CoroutineScope.() -> Unit): Job {
+    requireNotNull(plugin) { "No plugin found in scope" }
+    return CoroutineScope(plugin.supervisor + Dispatchers.Default).launch {
         block()
     }
+}
 
+
+fun <T> World.launch(
+    plugin: KotlinPlugin? = KotaleInitializer.plugin,
+    block: suspend CoroutineScope.() -> T
+): Deferred<T> {
+    requireNotNull(plugin) { "No plugin found in scope" }
+    return CoroutineScope(plugin.supervisor + this.dispatcher).async {
+        block()
+    }
+}
 
 fun Job.asVoidCompletableFuture(): CompletableFuture<Void> {
     val future = CompletableFuture<Void>()
