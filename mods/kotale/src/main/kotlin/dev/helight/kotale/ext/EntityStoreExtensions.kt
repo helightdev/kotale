@@ -10,6 +10,7 @@ import com.hypixel.hytale.server.core.modules.entitystats.EntityStatMap
 import com.hypixel.hytale.server.core.modules.entitystats.asset.DefaultEntityStatTypes
 import com.hypixel.hytale.server.core.universe.PlayerRef
 import com.hypixel.hytale.server.core.universe.world.World
+import com.hypixel.hytale.server.core.universe.world.storage.ChunkStore
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore
 
 val Ref<EntityStore>.player: Player get() = this.store.player(this)
@@ -17,6 +18,8 @@ val Ref<EntityStore>.playerRef: PlayerRef get() = this.store.playerRef(this)
 val Ref<EntityStore>.playerRefOrNull: PlayerRef? get() = this.store.playerRefOrNull(this)
 val PlayerRef.playerOrNull: Player? get() = this.reference?.player
 val PlayerRef.world: World? get() = this.reference?.store?.externalData?.world
+val Store<EntityStore>.world: World get() = this.externalData.world
+val Ref<EntityStore>.world: World get() = this.store.externalData.world
 
 fun Store<EntityStore>.heal(ref: Ref<EntityStore>) {
     val comp = getComponent(ref, EntityStatMap.getComponentType())
