@@ -91,7 +91,7 @@ File("components.csv").readLines().drop(1).forEach { line ->
     """.trimIndent().let { functions.add(it) }
                 else {
 
-                    """ fun ${it.base}.ensure${simpleName}(component: $name): $name = this${it.path}.ensureAndGetComponent(${it.args}$name.getComponentType())
+                    """ fun ${it.base}.ensure${simpleName}(): $name = this${it.path}.ensureAndGetComponent(${it.args}$name.getComponentType())
   """.trimIndent().let { functions.add(it) }
 
                     """
@@ -99,11 +99,9 @@ File("components.csv").readLines().drop(1).forEach { line ->
     """.trimIndent().let { functions.add(it) }
 
                     """
-        fun ${it.base}.remove${simpleName}() = this${it.path}.removeComponent(${it.args}$name.getComponentType())
+        fun ${it.base}.remove${simpleName}() = this${it.path}.tryRemoveComponent(${it.args}$name.getComponentType())
     """.trimIndent().let { functions.add(it) }
                 }
-
-
             } else {
                 if (extType == ExtType.Default) """
         val ${it.base}.$lowerName: $name
@@ -149,7 +147,7 @@ File("components.csv").readLines().drop(1).forEach { line ->
     """.trimIndent().let { functions.add(it) }
 
                     """
-        fun ${it.base}.remove$simpleName(${it.keyName}: ${it.keyType}) = this.removeComponent(${it.keyName}, $name.getComponentType())
+        fun ${it.base}.remove$simpleName(${it.keyName}: ${it.keyType}) = this.tryRemoveComponent(${it.keyName}, $name.getComponentType())
     """.trimIndent().let { functions.add(it) }
                 } else {
                     """
