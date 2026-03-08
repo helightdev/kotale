@@ -19,6 +19,13 @@ inline fun <reified SELF> builderCodec(supplier: Supplier<SELF>): BuilderCodec.B
     return BuilderCodec.builder(SELF::class.java, supplier)
 }
 
+inline fun <reified SELF> builderCodec(
+    supplier: Supplier<SELF>,
+    parent: BuilderCodec<in SELF>
+): BuilderCodec.Builder<SELF> {
+    return BuilderCodec.builder(SELF::class.java, supplier, parent)
+}
+
 fun <SELF, T, BUILDER : BuilderCodec.BuilderBase<SELF, BUILDER>> BUILDER.property(
     property: KMutableProperty<T>, codec: Codec<T>,
     name: String = property.name.replaceFirstChar(Char::uppercase),
@@ -34,6 +41,27 @@ fun <SELF, T, BUILDER : BuilderCodec.BuilderBase<SELF, BUILDER>> BUILDER.propert
         KeyedCodec(name, codec, required),
         { comp: SELF, value: T -> setter.invoke(comp, value) },
         { comp: SELF -> getter.invoke(comp) as T }
+    )
+    block.invoke(append)
+    return append.add()
+}
+
+fun <SELF, T, BUILDER : BuilderCodec.BuilderBase<SELF, BUILDER>> BUILDER.inheritedProperty(
+    property: KMutableProperty<T>, codec: Codec<T>,
+    name: String = property.name.replaceFirstChar(Char::uppercase),
+    required: Boolean = false,
+    block: BuilderField.FieldBuilder<SELF, T, BUILDER>.() -> Unit = {}
+): BUILDER {
+    val lookup = MethodHandles.lookup()
+    val getter = lookup.unreflect(property.getter.javaMethod)
+    val setter = lookup.unreflect(property.setter.javaMethod)
+
+    @Suppress("UNCHECKED_CAST")
+    val append = this.appendInherited(
+        KeyedCodec(name, codec, required),
+        { comp: SELF, value: T -> setter.invoke(comp, value) },
+        { comp: SELF -> getter.invoke(comp) as T },
+        { comp: SELF, parent: SELF -> setter.invoke(comp, getter.invoke(parent) as T) }
     )
     block.invoke(append)
     return append.add()
@@ -71,6 +99,6 @@ fun <T> Codec<T>.array(default: T? = null): ArrayCodec<T?> {
     return ArrayCodec<T?>(this, { arrayOfNulls(it) }, { default })
 }
 
-fun <T> Codec<T>.map(immutable: Boolean = false): MapCodec<T, MutableMap<String,T>> {
+fun <T> Codec<T>.map(immutable: Boolean = false): MapCodec<T, MutableMap<String, T>> {
     return MapCodec(this, ::Object2ObjectOpenHashMap, immutable)
 }
