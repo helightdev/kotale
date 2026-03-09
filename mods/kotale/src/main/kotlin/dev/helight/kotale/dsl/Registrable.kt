@@ -84,7 +84,6 @@ abstract class EntityComponentCompanion<T>(
 
 abstract class CodecRegistrableCompanion<T, REGISTRY_KEY, REGISTRY_TYPE>(
     val clazz: KClass<T>,
-    val supplier: () -> T,
     val parent: AssetCodecMapCodec<REGISTRY_KEY, REGISTRY_TYPE>,
     val codecBuilder: () -> BuilderCodec.Builder<T>,
     val id: String = clazz.simpleName!!
