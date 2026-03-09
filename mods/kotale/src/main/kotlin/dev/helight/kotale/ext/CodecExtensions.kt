@@ -14,6 +14,7 @@ import java.util.function.Supplier
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.jvm.javaMethod
 
+import java.lang.reflect.Array as JavaArray
 
 inline fun <reified SELF> builderCodec(supplier: Supplier<SELF>): BuilderCodec.Builder<SELF> {
     return BuilderCodec.builder(SELF::class.java, supplier)
@@ -95,8 +96,11 @@ inline fun <SELF, reified T, BUILDER : BuilderCodec.BuilderBase<SELF, BUILDER>> 
     return append.add()
 }
 
-fun <T> Codec<T>.array(default: T? = null): ArrayCodec<T?> {
-    return ArrayCodec<T?>(this, { arrayOfNulls(it) }, { default })
+inline fun <reified T> Codec<T>.array(default: T? = null): ArrayCodec<T?> {
+    return ArrayCodec<T?>(this, {
+        @Suppress("UNCHECKED_CAST")
+        JavaArray.newInstance(T::class.java, it) as Array<T?>
+    }, { default })
 }
 
 fun <T> Codec<T>.map(immutable: Boolean = false): MapCodec<T, MutableMap<String, T>> {
