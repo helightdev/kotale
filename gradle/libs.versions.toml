@@ -2,7 +2,7 @@
 kotlin = "2.3.10"
 kotlinxCoroutines = "1.10.2"
 kotlinxSerialization = "1.10.0"
-shadow = "9.3.2"
+shadow = "9.4.0"
 hytale = "2026.01.17"
 
 [libraries]
