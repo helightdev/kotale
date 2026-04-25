@@ -1,5 +1,5 @@
 [versions]
-kotlin = "2.3.10"
+kotlin = "2.3.21"
 kotlinxCoroutines = "1.10.2"
 kotlinxSerialization = "1.10.0"
 shadow = "9.4.1"
